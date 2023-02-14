@@ -4,7 +4,7 @@
 #include <set>
 #include <vector>
 
-// variant 19
+// variant 18
 
 class Grammar {
     std::vector<std::string> VN;
@@ -16,10 +16,10 @@ public:
         VN = {"S", "A", "B", "C"};
         VT = {"a", "b"};
 
-        P["S"] = {"aA"};
-        P["A"] = {"bS", "aB"};
-        P["B"] = {"bC"};
-        P["C"] = {"aA", "b"};
+        P["S"] = {"aA", "aB"};
+        P["A"] = {"bS"};
+        P["B"] = {"aC"};
+        P["C"] = {"a", "bS"};
     }
 
     std::vector<std::string>& get_VN() {
