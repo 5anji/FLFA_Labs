@@ -26,18 +26,19 @@ int main() {
     file.close();
 
     Automata automata2;
-    automata2.final_states = {"q3"};
+    // mistaken variant
+    automata2.final_states = {"q2"};
     automata2.start_state = "q0";
-    automata2.symbols = {"q0", "q1", "q2", "q3"};
+    automata2.symbols = {"q0", "q1", "q2"};
     automata2.states = {"a", "b"};
     automata2.transitions =
             {
                     {{"q0", "a"}, "q1"},
+                    {{"q0", "a"}, "q0"},
                     {{"q1", "b"}, "q2"},
-                    {{"q2", "b"}, "q3"},
-                    {{"q3", "a"}, "q1"},
-                    {{"q2", "b"}, "q2"},
-                    {{"q1", "a"}, "q1"}};
+                    {{"q0", "b"}, "q0"},
+                    {{"q1", "b"}, "q1"},
+                    {{"q2", "b"}, "q2"}};
 
     std::cout << "This automata is: " << (automata2.isDeterministic() ? "Deterministic" : "Non-Deterministic") << std::endl;
     automata2.convertNFAToDFA();
