@@ -1,103 +1,44 @@
-#include <algorithm>
+#include "automata.h"
+#include "grammar.h"
+
+#include <fstream>
 #include <iostream>
-#include <map>
-#include <set>
-#include <vector>
-
-// variant 18
-
-class Grammar {
-    std::vector<std::string> VN;
-    std::vector<std::string> VT;
-    std::map<std::string, std::vector<std::string>> P;
-
-public:
-    Grammar() {
-        VN = {"S", "A", "B", "C"};
-        VT = {"a", "b"};
-
-        P["S"] = {"aA", "aB"};
-        P["A"] = {"bS"};
-        P["B"] = {"aC"};
-        P["C"] = {"a", "bS"};
-    }
-
-    std::vector<std::string>& get_VN() {
-        return VN;
-    }
-    std::vector<std::string>& get_VT() {
-        return VT;
-    }
-
-    std::map<std::string, std::vector<std::string>>& get_P() {
-        return P;
-    }
-    void generate_strings() {
-        int count = 0;
-        while (count < 5) {
-            std::string curr = "S";
-            std::string res = "";
-
-            while (std::find(VN.begin(), VN.end(), curr) != VN.end()) {
-                int random = rand() % P[curr].size();
-                res += P[curr][random];
-                curr = res.back();
-            }
-
-            if (std::find(VT.begin(), VT.end(), curr) != VT.end()) {
-                std::cout << res << std::endl;
-                count++;
-            }
-        }
-    }
-};
-
-class FiniteAutomaton {
-    std::map<std::pair<std::string, std::string>, std::string> transitions;
-    std::vector<std::string> states;
-    std::vector<std::string> symbols;
-    std::string start_state;
-    std::vector<std::string> final_states;
-
-public:
-    FiniteAutomaton() = default;
-    FiniteAutomaton(Grammar& gr) {
-        for (auto [key, value] : gr.get_P()) {
-            for (std::string v : value) {
-                transitions[make_pair(key, v.substr(0, 1))] = v.substr(1, 1);
-                states.push_back(key);
-                symbols.push_back(v.substr(0, 1));
-            }
-        }
-
-        start_state = "S";
-        final_states = gr.get_VN();
-    }
-
-    bool is_valid_string(std::string str) {
-        std::string curr = start_state;
-        for (auto&& c : str) {
-            std::string symbol(1, c);
-            if (std::count(symbols.begin(), symbols.end(), symbol) == 0) {
-                return false;
-            }
-
-            curr = transitions[std::make_pair(curr, symbol)];
-        }
-
-        return std::count(final_states.begin(), final_states.end(), curr) > 0;
-    }
-};
 
 int main() {
-    Grammar g;
-    // g.generate_strings();
+    int counter = 0;
+    std::fstream file("./varians.txt");
+    std::string variant = "19";
+    std::string line;
 
-    FiniteAutomaton fa(g);
-    std::cout << fa.is_valid_string("a") << std::endl;
-    std::cout << fa.is_valid_string("B") << std::endl;
-    std::cout << fa.is_valid_string("ab") << std::endl;
-    std::cout << fa.is_valid_string("aba") << std::endl;
-    
-    return 0;
+    while (getline(file, line)) {
+        if (line != "") variant += line + "\n";
+        if (line.find('}') != std::string::npos) counter++;
+        if (counter % 3 == 0 && counter > 0) {
+            if (variant != "\r\n" && variant.find("{") != std::string::npos) {
+                Grammar grammar(variant);
+                Automata automata(grammar);
+                Automata::AutomataToGrammar(automata);
+                std::cout << grammar.clasify() << std::endl;
+                variant = "";
+            }
+        }
+    }
+    file.close();
+
+    Automata automata2;
+    automata2.final_states = {"q3"};
+    automata2.start_state = "q0";
+    automata2.symbols = {"q0", "q1", "q2", "q3"};
+    automata2.states = {"a", "b"};
+    automata2.transitions =
+            {
+                    {{"q0", "a"}, "q1"},
+                    {{"q1", "b"}, "q2"},
+                    {{"q2", "b"}, "q3"},
+                    {{"q3", "a"}, "q1"},
+                    {{"q2", "b"}, "q2"},
+                    {{"q1", "a"}, "q1"}};
+
+    std::cout << "This automata is: " << (automata2.isDeterministic() ? "Deterministic" : "Non-Deterministic") << std::endl;
+    automata2.convertNFAToDFA();
 }
