@@ -52,4 +52,21 @@ A non-deterministic finite automaton NFA is a type of finite automaton that can 
 
 ### Implementation
 
-__still not working__
+Actually after refactoring the files, the programm is valid for any variant in the variants.txt file. Grammar was a little changed, and added the NFAorDFA determination function in the exsiting files. In the __automata.h__ is located the method __isDeterministic()__ that return a bool value.
+
+```c++
+bool isDeterministic() const {
+    std::set<std::pair<std::string, std::string>> visited;
+    for (auto&& [key, value] : transitions) {
+        std::string state = key.first;
+        std::string symbol = key.second;
+        if (visited.count({state, symbol}))
+            return false;
+        visited.insert({state, symbol});
+    }
+    return true;
+}
+```
+Iteratively, check the values, and drop an "false" if this finds the repeated key.
+
+In my case the language is Deterministic.
