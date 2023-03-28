@@ -52,7 +52,7 @@ A non-deterministic finite automaton NFA is a type of finite automaton that can 
 
 ### Implementation
 
-Actually after refactoring the files, the programm is valid for any variant in the variants.txt file. Grammar was a little changed, and added the NFAorDFA determination function in the exsiting files. In the __automata.h__ is located the method __isDeterministic()__ that return a bool value.
+Actually after refactoring the files, the programm is valid for any variant in the variants.txt file. Grammar was a little changed, and added the NFAorDFA determination function in the exsiting files(*changes for Lab1*). In the __automata.h__ is located the method __isDeterministic()__ that return a bool value.
 
 ```c++
 bool isDeterministic() const {
@@ -67,6 +67,18 @@ bool isDeterministic() const {
     return true;
 }
 ```
+
 Iteratively, check the values, and drop an "false" if this finds the repeated key.
 
 In my case the language is Deterministic.
+
+How it works... it visits all pairs of keys & values, and if it founds a repetition, it will drop false, otherwise - true.
+
+After that we convert the NFA to DFA, by the following algorithm:
+
+1) Convert the given NFA to its equivalent transition table
+2) Create the DFA’s start state
+3) Create the DFA’s transition table
+4) Create the DFA’s final states
+5) Simplify the DFA
+6) Repeat steps *3-5* until no further simplification is possible
